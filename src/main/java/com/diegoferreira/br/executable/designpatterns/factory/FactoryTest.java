@@ -4,7 +4,7 @@ public class FactoryTest {
 
 
     public static void main(String[] args) {
-        TransportEnum transportType = TransportEnum.ROAD;
+        TransportEnum transportType = TransportEnum.AIR;
         Transport transportPackage = null;
 
         switch (transportType) {
@@ -15,6 +15,9 @@ public class FactoryTest {
                 transportPackage = new SeaLogistics().createTransport();
                 break;
             case AIR:
+                transportPackage = new AirLogistics().createTransport();
+                break;
+            default:
                 throw new RuntimeException("Delivery method not implemented");
         }
         transportPackage.deliver();
