@@ -33,11 +33,12 @@ public class Producer {
 
 
     public static void main(String[] args) {
-        KafkaProducer<String, String> producer = getProducer();
+        KafkaProducer<String, String> producer = getSimpleProducer();
+
         try {
             for (int i = 0; i < 10000; i++) {
-                LOG.info("Producing " + i);
-                producer.send(getRecord("test", TOPIC, KEY));
+                Thread.sleep(100L);
+                producer.send(getRecord("test", TOPIC, KEY), new ProduceCallback());
             }
         } catch (Exception e) {
             LOG.severe(String.format("Error while trying to send message. Error message: %s", e.getMessage()));
@@ -49,7 +50,17 @@ public class Producer {
         return new ProducerRecord(topic, 5, key, content);
     }
 
-    public static KafkaProducer getProducer() {
+    public static KafkaProducer getSimpleProducer() {
+        Properties config = new Properties();
+        config.put("client.id", CLIEND_ID);
+        config.put("bootstrap.servers", BOOTSTRAP_SERVERS);
+        config.put("acks", ACKS);
+        config.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        config.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        return new KafkaProducer<String, String>(config);
+    }
+
+    public static KafkaProducer getSASLProducer() {
         Properties config = new Properties();
         config.put("client.id", CLIEND_ID);
         config.put("bootstrap.servers", BOOTSTRAP_SERVERS);
